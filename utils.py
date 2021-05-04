@@ -42,6 +42,22 @@ class ReplayBuffer(object):
 			)
 
 
+def rollout(env, network, T = int(1e6)): 
+	pass 
+
+
+
+def eval(): 
+	pass 
+
+def get_action(): 
+	pass 
+
+def save(): 
+	pass 
+
+def load(): 
+	pass 
 
 
 # test functions in the main loop 
