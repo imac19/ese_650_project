@@ -6,7 +6,7 @@ import gym
 
 
 class ReplayBuffer(object): 
-	def __init__(self, state_dim, act_dim, max_size=int(1e5)): 
+	def __init__(self, state_dim, act_dim, max_size=int(1e6)): 
 		self.max_size = max_size 
 		self.size = 0 
 		self.counter = 0 
@@ -32,7 +32,7 @@ class ReplayBuffer(object):
 
 
 	def sample(self, batch_size=1000): 
-		ind = np.random.randint(0, self.size, self.batch_size)
+		ind = np.random.randint(0, self.size, batch_size)
 
 		return (
 			torch.FloatTensor(self.state[ind]).to(self.device),
@@ -43,25 +43,25 @@ class ReplayBuffer(object):
 			)
 
 
-def evaluate(agent):
-    e = gym.make('FetchPickAndPlace-v1')
-    iterations = 100
-    all_rs = []
-    
-    for i in range(0, iterations):
-        total_r = 0
-        state = e.reset()
-        done = False
-        
-        while not done:
-            action = agent.get_best_action(np.array(state))
-            state, reward, done, is_success = e.step(action)
-            total_r += reward
-        all_rs.append(total_r)
-    
-    r = np.mean(all_rs)
-    
-    return r
+def evaluate(agent, args):
+	e = gym.make(args)
+	iterations = 100
+	all_rs = []
+	
+	for i in range(0, iterations):
+		total_r = 0
+		state = e.reset()
+		done = False
+		
+		while not done:
+			action = agent.get_best_action(np.array(state))
+			state, reward, done, is_success = e.step(action)
+			total_r += reward
+		all_rs.append(total_r)
+	
+	r = np.mean(all_rs)
+	
+	return r
 
 def rollout(): 
 	pass 
