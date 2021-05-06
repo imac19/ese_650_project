@@ -1,6 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 import torch 
+import gym
 
 
 
@@ -42,6 +43,25 @@ class ReplayBuffer(object):
 			)
 
 
+def evaluate(agent):
+    e = gym.make('FetchPickAndPlace-v1')
+    iterations = 100
+    all_rs = []
+    
+    for i in range(0, iterations):
+        total_r = 0
+        state = e.reset()
+        done = False
+        
+        while not done:
+            action = agent.get_best_action(np.array(state))
+            state, reward, done, is_success = e.step(action)
+            total_r += reward
+        all_rs.append(total_r)
+    
+    r = np.mean(all_rs)
+    
+    return r
 
 
 # test functions in the main loop 
