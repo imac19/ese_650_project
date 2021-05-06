@@ -63,7 +63,11 @@ def evaluate(agent):
     
     return r
 
+def rollout(): 
+	pass 
+
+
 
 # test functions in the main loop 
 if __name__ ==  "__main__": 
-	mem = ReplayBuffer(4, 2)
+	pass

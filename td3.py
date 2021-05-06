@@ -10,8 +10,7 @@ import os
 class Critic(nn.module): 
 	def __init__(self, state_dim, act_dim): 
 		super(Critic, self).__init__()
-
-		self.device = 
+		
 		self.net = nn.Sequential(
 				nn.Linear(state_dim+act_dim, 256),
 				nn.ReLU(), 
@@ -19,6 +18,9 @@ class Critic(nn.module):
 				nn.ReLU(), 
 				nn.Linear(256, 1)
 			)
+
+		device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+		self.to(device)
 
 	def forward(self, state, action): 
 		# state action pair 
@@ -48,7 +50,8 @@ class Actor(nn.module):
 				nn.ReLU(), 
 				nn.Linear(256, act_dim)
 			)
-
+		device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+		self.to(device)
 
 	def forward(self, state): 
 		a = self.net(state)
