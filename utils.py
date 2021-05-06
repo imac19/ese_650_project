@@ -62,12 +62,3 @@ def evaluate(agent, args):
 	r = np.mean(all_rs)
 	
 	return r
-
-def rollout(): 
-	pass 
-
-
-
-# test functions in the main loop 
-if __name__ ==  "__main__": 
-	pass
