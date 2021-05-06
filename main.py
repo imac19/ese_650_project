@@ -35,10 +35,17 @@ class Agent(object):
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=3e-4)
         self.critic_optimizer = torch.optim.Adam(self.actor.parameters(), lr=3e-4)
         
-        self.device = 'cuda'
-        
+        # self.device =         
     def train(self, buffer, batch_size=256): 
         state, action, next_state, reward, done = buffer.sample(batch_size)
+        
+        aldkfj;lasdfj;lasdkfj
+        alskdfn;lasdkfj
+        kjasdf;lkjasfl
+
+        a;ksdfj;alskfj
+
+
         
     def get_best_action(self, state):
         state = torch.FloatTensor(state.reshape(-1,1)).to(self.device)
@@ -68,6 +75,11 @@ class Agent(object):
         
         self.actor_optimizer.load_state_dict(torch.load(file_path + '_actor_optimizer_{}'.format(checkpoint)))
         self.critic_optimizer.load_state_dict(torch.load(file_path + '_critic_optimizer_checkpoint_{}'.format(checkpoint)))
+
+
+
+
+
 
 if __name__ == "__main__": 
     parser = argparse.ArgumentParser()
