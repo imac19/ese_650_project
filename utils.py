@@ -43,7 +43,6 @@ class ReplayBuffer(object):
 			)
 
 
-<<<<<<< HEAD
 def evaluate(agent):
     e = gym.make('FetchPickAndPlace-v1')
     iterations = 100
@@ -63,24 +62,6 @@ def evaluate(agent):
     r = np.mean(all_rs)
     
     return r
-=======
-def rollout(env, network, T = int(1e6)): 
-	pass 
-
-
-
-def eval(): 
-	pass 
-
-def get_action(): 
-	pass 
-
-def save(): 
-	pass 
-
-def load(): 
-	pass 
->>>>>>> 3b2033d166eee404b26746cb8080866f52d903e3
 
 
 # test functions in the main loop 

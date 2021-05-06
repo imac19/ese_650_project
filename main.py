@@ -6,11 +6,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 from utils import *
-<<<<<<< HEAD
 from td3 import *
-=======
-from td3 import Actor, Critic
->>>>>>> 3b2033d166eee404b26746cb8080866f52d903e3
 import argparse
 import gym 
 
