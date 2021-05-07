@@ -34,9 +34,9 @@ class Agent(object):
         self.critic1_target = copy.deepcopy(self.critic1)
         self.critic2_target = copy.deepcopy(self.critic2)
 
-        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=3e-4)
-        self.critic1_optimizer = torch.optim.Adam(self.critic1.parameters(), lr=3e-4)
-        self.critic2_optimizer = torch.optim.Adam(self.critic2.parameters(), lr=3e-4)
+        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=1e-3)
+        self.critic1_optimizer = torch.optim.Adam(self.critic1.parameters(), lr=1e-3)
+        self.critic2_optimizer = torch.optim.Adam(self.critic2.parameters(), lr=1e-3)
 
 #         self.writer = SummaryWriter()
         self.iters = 0 
@@ -85,7 +85,7 @@ class Agent(object):
     def get_best_action(self, state):
         # print('State:')
         # print(state)
-        state = torch.FloatTensor(state).to(self.device)
+        state = torch.FloatTensor(state['observation']).to(self.device)
         action = self.actor(state).detach().cpu().numpy()
         # print('Action:')
         # print(action)
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     env = gym.make(args.env)
-    state_dim = env.observation_space.shape[0]
+    state_dim = env.observation_space['observation'].shape[0]
     action_dim = env.action_space.shape[0]
     max_action = float(env.action_space.high[0])
     
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     
     if args.mode == 'train': 
         replay_buffer = ReplayBuffer(state_dim, action_dim)
-        replay_init_size = 20000
+        replay_init_size = 30000
         episode_timesteps = 0
         state, done = env.reset(), False
         
@@ -172,7 +172,7 @@ if __name__ == "__main__":
                 state, done = env.reset(), False
                 episode_timesteps = 0 
                 
-        training_iterations = 100000
+        training_iterations = 1000000
         episode_timesteps = 0
         train_episodes = 1
         train_reward = 0
@@ -203,9 +203,9 @@ if __name__ == "__main__":
                 train_episodes += 1
                 train_reward = 0
                 
-            if train_episodes % eval_every == 0:
-                eval_reward = evaluate(agent, args.env)
-                eval_rewards_plotting.append(eval_reward)
+            # if train_episodes % eval_every == 0:
+            #     eval_reward = evaluate(agent, args.env)
+            #     eval_rewards_plotting.append(eval_reward)
                 # agent.writer.add_scalar('Rewards/eval', eval_reward, i)
 
 
