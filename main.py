@@ -172,7 +172,7 @@ if __name__ == "__main__":
                 state, done = env.reset(), False
                 episode_timesteps = 0 
                 
-        training_iterations = 100000
+        training_iterations = 1000000
         episode_timesteps = 0
         train_episodes = 1
         train_reward = 0
