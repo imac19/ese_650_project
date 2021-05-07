@@ -27,7 +27,7 @@ class ReplayBuffer(object):
 		self.reward[self.counter] = reward
 		self.done[self.counter] = done
 
-		self.counter = self.counter % self.max_size
+		self.counter = (self.counter + 1) % self.max_size
 		self.size = min(self.size+1, self.max_size)
 
 

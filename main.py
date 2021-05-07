@@ -22,8 +22,8 @@ class Agent(object):
         self.max_action = max_action
         self.gamma = gamma # discount factor 
         self.tau = tau # exponential averaging factor
-        self.policy_noise = policy_noise
-        self.noise_clip = noise_clip
+        self.policy_noise = policy_noise * max_action
+        self.noise_clip = noise_clip * max_action
         self.freq = freq
 
         self.actor = Actor(self.state_dim, self.act_dim, self.max_action)
@@ -48,7 +48,7 @@ class Agent(object):
         with torch.no_grad(): 
             # compute target actions 
             noise = torch.clip(torch.randn_like(action)*self.policy_noise, -self.noise_clip, self.noise_clip)
-            next_action = torch.clip(self.actor_target(next_state), -self.max_action, self.max_action)
+            next_action = torch.clip(self.actor_target(next_state) + noise, -self.max_action, self.max_action)
 
             # compute target q 
             target_q1 = self.critic1_target(next_state, next_action)
@@ -83,27 +83,30 @@ class Agent(object):
             self.update_target_weights()
 
     def get_best_action(self, state):
+        # print('State:')
+        # print(state)
         state = torch.FloatTensor(state).to(self.device)
         action = self.actor(state).detach().cpu().numpy()
+        # print('Action:')
+        # print(action)
         return action
 
     def update_target_weights(self): 
-        with torch.no_grad():
-            critic1_params = self.critic1.parameters()
-            critic1_target_params = self.critic1_target.parameters()
-            for p, tp in zip(critic1_params, critic1_target_params): 
-                tp.copy_(self.tau*p.data + (1-self.tau)*tp.data)
+        critic1_params = self.critic1.parameters()
+        critic1_target_params = self.critic1_target.parameters()
+        for p, tp in zip(critic1_params, critic1_target_params): 
+            tp.data.copy_(self.tau*p.data + (1-self.tau)*tp.data)
 
-            critic2_params = self.critic2.parameters()
-            critic2_target_params = self.critic2_target.parameters()
-            for p, tp in zip(critic2_params, critic2_target_params): 
-                tp.copy_(self.tau*p.data + (1-self.tau)*tp.data)
+        critic2_params = self.critic2.parameters()
+        critic2_target_params = self.critic2_target.parameters()
+        for p, tp in zip(critic2_params, critic2_target_params): 
+            tp.data.copy_(self.tau*p.data + (1-self.tau)*tp.data)
 
 
-            actor_params = self.actor.parameters()
-            actor_target_params = self.actor_target.parameters()
-            for p, tp in zip(actor_params, actor_target_params): 
-                tp.copy_(self.tau*p.data + (1-self.tau)*tp.data)
+        actor_params = self.actor.parameters()
+        actor_target_params = self.actor_target.parameters()
+        for p, tp in zip(actor_params, actor_target_params): 
+            tp.data.copy_(self.tau*p.data + (1-self.tau)*tp.data)
 
         
     def save(self, file_path='saved', checkpoint=0):
@@ -146,7 +149,7 @@ if __name__ == "__main__":
     env = gym.make(args.env)
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.shape[0]
-    max_action = env.action_space.high[0]
+    max_action = float(env.action_space.high[0])
     
     agent = Agent(state_dim, action_dim, max_action)
     
@@ -160,9 +163,9 @@ if __name__ == "__main__":
             episode_timesteps+=1
             action = env.action_space.sample()
             next_state, reward, done, is_success = env.step(action)
-            # done = float(done) if episode_timesteps < env._max_episode_steps else 0
+            done_bool = float(done) if episode_timesteps < env._max_episode_steps else 0
             
-            replay_buffer.add(state, action, next_state, reward, done)
+            replay_buffer.add(state, action, next_state, reward, done_bool)
             state = next_state
             
             if done:
@@ -181,14 +184,15 @@ if __name__ == "__main__":
         state = env.reset()
         for i in tqdm.tqdm(range(training_iterations)):
             episode_timesteps += 1
-            action = agent.get_best_action(state) + np.random.normal(0, max_action*0.1, size=action_dim).clip(-max_action, max_action)
+            action = (agent.get_best_action(state) + np.random.normal(0, max_action*0.1, size=action_dim)).clip(-max_action, max_action)
             next_state, reward, done, _ = env.step(action)
-            # done = float(done) if episode_timesteps < env._max_episode_steps else 0 
+            done_bool = float(done) if episode_timesteps < env._max_episode_steps else 0 
             
-            replay_buffer.add(state, action, next_state, reward, done)
+            replay_buffer.add(state, action, next_state, reward, done_bool)
             state = next_state
             train_reward += reward
             agent.train(replay_buffer)
+            
             if done:
                 print('Training Episode: {}, Training Reward: {}, Training Timesteps: {}'
                       .format(train_episodes, train_reward, episode_timesteps))
@@ -213,7 +217,7 @@ if __name__ == "__main__":
     plt.plot(list(range(0, len(train_rewards_plotting))), train_rewards_plotting)
 
     plt.figure(2)
-    plt.plot(list(range(0, eval_rewards_plotting)), eval_rewards_plotting)
+    plt.plot(list(range(0, len(eval_rewards_plotting))), eval_rewards_plotting)
     plt.show()
 
 
