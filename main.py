@@ -142,7 +142,7 @@ class Agent(object):
 
 if __name__ == "__main__": 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--env', default='HalfCheetah-v2')
+    parser.add_argument('--env', default='FetchReach-v1')
     parser.add_argument('--mode', default='train')
     args = parser.parse_args()
     
@@ -172,7 +172,7 @@ if __name__ == "__main__":
                 state, done = env.reset(), False
                 episode_timesteps = 0 
                 
-        training_iterations = 1000000
+        training_iterations = 500000
         episode_timesteps = 0
         train_episodes = 1
         train_reward = 0
@@ -194,7 +194,7 @@ if __name__ == "__main__":
             agent.train(replay_buffer)
             
             if done:
-                print('Training Episode: {}, Training Reward: {}, Training Timesteps: {}'
+                tqdm.tqdm.write('Training Episode: {}, Training Reward: {}, Training Timesteps: {}'
                       .format(train_episodes, train_reward, episode_timesteps))
                 state = env.reset()
                 train_rewards_plotting.append(train_reward)
@@ -215,10 +215,3 @@ if __name__ == "__main__":
 
     plt.figure(1)
     plt.plot(list(range(0, len(train_rewards_plotting))), train_rewards_plotting)
-
-    plt.figure(2)
-    plt.plot(list(range(0, len(eval_rewards_plotting))), eval_rewards_plotting)
-    plt.show()
-
-
-    # if args.mode == 'eval': 
