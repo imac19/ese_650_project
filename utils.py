@@ -21,9 +21,9 @@ class ReplayBuffer(object):
 
 
 	def add(self, state, action, next_state, reward, done): 
-		self.state[self.counter] = state
+		self.state[self.counter] = state['observation']
 		self.action[self.counter] = action
-		self.next_state[self.counter] = next_state
+		self.next_state[self.counter] = next_state['observation']
 		self.reward[self.counter] = reward
 		self.done[self.counter] = done
 
