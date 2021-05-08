@@ -15,7 +15,7 @@ import tqdm
 
 class Agent(object): 
     def __init__(self, state_dim, act_dim, max_action,
-                 gamma=0.99, tau=0.005, policy_noise=0.2, noise_clip=0.5, freq=2): 
+                 gamma=0.99, tau=0.05, policy_noise=0.2, noise_clip=0.5, freq=2): 
         
         self.state_dim = state_dim
         self.act_dim = act_dim 
@@ -184,7 +184,7 @@ if __name__ == "__main__":
         state = env.reset()
         for i in tqdm.tqdm(range(training_iterations)):
             episode_timesteps += 1
-            action = (agent.get_best_action(state) + np.random.normal(0, max_action*0.1, size=action_dim)).clip(-max_action, max_action)
+            action = (agent.get_best_action(state) + np.random.normal(0, max_action*0.3, size=action_dim)).clip(-max_action, max_action)
             next_state, reward, done, _ = env.step(action)
             done_bool = float(done) if episode_timesteps < env._max_episode_steps else 0 
             
